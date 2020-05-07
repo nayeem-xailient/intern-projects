@@ -1,0 +1,26 @@
+def make_csv(folderpath, xmlfilename):
+    tree = ET.parse(os.path.join(folderpath, xmlfilename))
+    root = tree.getroot()
+    filename, _ = xmlfilename.rsplit('.', 1)
+    Shot_30AA = open(filename+'.csv', 'w', newline='')
+    csvwriter = csv.writer(Shot_30AA)
+    head = []
+
+    ShotCode = root.attrib['ShotCode']
+    csvwriter.writerow(['ShotCode', ShotCode])
+    head.append(ShotCode)
+
+    for member in root.getchildren():
+        submembers = member.getchildren()
+        keys = submembers[0].attrib.keys()
+        csvwriter.writerow("\n")
+        csvwriter.writerow(keys)
+        for submember in submembers:
+            row_data = [submember.attrib[k] for k in keys]
+            csvwriter.writerow(row_data)
+    Shot_30AA.close()
+
+path = '/Users/nayeem/Downloads/Internship Work/pedestrian-detection/Train/Train'
+for filename in os.listdir(path):
+    if filename.endswith('.xml'):
+        make_csv(path, filename)
